@@ -2,4 +2,4 @@
 
 (defrecord Event [stream-id version payload timestamp])
 
-(defn- now [] (java.time.Instant/now))
+(defn now [] (java.time.Instant/now))

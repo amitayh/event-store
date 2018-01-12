@@ -51,6 +51,9 @@
 (defn- was-applied? [result]
   (-> result first applied))
 
+(defn- has-retries? [retries]
+  (> retries 0))
+
 (defn persist-events
   "Persist events to stream"
 
@@ -58,7 +61,7 @@
    (loop [retries 5
           expected-version (stream-max-version session stream-id)]
      (let [result (persist-events session stream-id payloads expected-version)]
-       (if (and (> retries 0) (= result :concurrent-modification))
+       (if (and (has-retries? retries) (= result :concurrent-modification))
          (recur (dec retries) (stream-max-version session stream-id))
          result))))
 
