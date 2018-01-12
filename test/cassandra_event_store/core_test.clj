@@ -41,7 +41,7 @@
 (defn init-fn [component]
   (loop [retries 5]
     (let [_session (connect)]
-      (when (and (> retries 0) (= _session :no-host-available))
+      (when (and (pos? retries) (= _session :no-host-available))
         (println "waiting for server...")
         (Thread/sleep 5000)
         (recur (dec retries))))))

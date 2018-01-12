@@ -16,7 +16,7 @@
     (hayt/where [[:stream_id stream-id]])
     (hayt/only-if [[:max_version expected-version]])))
 
-(defn- insert [stream-id event]
+(defn- insert-event [stream-id event]
   (hayt/insert :events
     (hayt/values {:stream_id stream-id
                   :version (:version event)
@@ -42,7 +42,7 @@
 (defn- create-batch [session stream-id events expected-version]
   (let [max-version (last-event-version events)
         update-version (update-max-version stream-id max-version expected-version)
-        insert-to-stream (partial insert stream-id)
+        insert-to-stream (partial insert-event stream-id)
         inserts (map insert-to-stream events)]
     (alia/batch (conj inserts update-version))))
 
@@ -51,17 +51,17 @@
 (defn- was-applied? [result]
   (-> result first applied))
 
-(defn- has-retries? [retries]
-  (> retries 0))
-
 (defn persist-events
-  "Persist events to stream"
+  "Persist events to stream `stream-id`.
+  Takes events' `payloads` and `expected-version` and appends them to stream.
+  If `expected-version` doesn't match, :concurrent-modification is returned.
+  Otherwise, the persisted events will be returned."
 
   ([session stream-id payloads]
    (loop [retries 5
           expected-version (stream-max-version session stream-id)]
      (let [result (persist-events session stream-id payloads expected-version)]
-       (if (and (has-retries? retries) (= result :concurrent-modification))
+       (if (and (= result :concurrent-modification) (pos? retries))
          (recur (dec retries) (stream-max-version session stream-id))
          result))))
 
@@ -71,6 +71,4 @@
      (let [events (to-events stream-id payloads (or expected-version 0))
            batch (create-batch session stream-id events expected-version)
            result (alia/execute session batch)]
-       (if (was-applied? result)
-         events
-         :concurrent-modification)))))
+       (if (was-applied? result) events :concurrent-modification)))))

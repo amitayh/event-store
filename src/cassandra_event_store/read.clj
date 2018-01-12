@@ -20,7 +20,8 @@
     (-> row :timestamp java.time.Instant/ofEpochMilli)))
 
 (defn read-events [session stream-id from-version max-count]
-  "Read events from stream"
+  "Read events from stream `stream-id`.
+  Returns `max-count` events, starting from `from-version`"
 
   (let [query (select-events stream-id from-version max-count)
         result (alia/execute session query {:fetch-size max-count})
