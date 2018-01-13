@@ -1,0 +1,13 @@
+sudo: true
+
+services:
+  - docker
+
+before_install:
+  - docker pull cassandra:latest
+
+language: clojure
+
+after_success:
+  - CLOVERAGE_VERSION=1.0.10 lein cloverage --codecov
+  - bash <(curl -s https://codecov.io/bash) -f target/coverage/codecov.json

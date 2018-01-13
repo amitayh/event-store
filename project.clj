@@ -7,4 +7,5 @@
                  [com.taoensso/nippy "2.14.0"]
                  [cc.qbits/alia-all "4.1.1"]
                  [cc.qbits/hayt "4.0.0"]
-                 [docker-fixture "0.1.2"]])
+                 [docker-fixture "0.1.2"]]
+  :plugins [[lein-cloverage "1.0.10"]])
