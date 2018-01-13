@@ -1,6 +1,6 @@
-(ns cassandra-event-store.read
+(ns org.amitayh.event-store.read
   (:import (java.time Instant))
-  (:require [cassandra-event-store.common :refer :all]
+  (:require [org.amitayh.event-store.common :refer :all]
             [qbits.alia :as alia]
             [taoensso.nippy :as nippy]
             [qbits.hayt :as hayt]))

@@ -1,4 +1,4 @@
-(defproject cassandra-event-store "0.1.0-SNAPSHOT"
+(defproject org.amitayh/event-store "0.1.0-SNAPSHOT"
   :description "Simple event store backed by Cassandra database"
   :url "https://github.com/amitayh/event-store"
   :license {:name "Eclipse Public License"

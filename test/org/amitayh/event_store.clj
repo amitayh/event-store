@@ -1,10 +1,10 @@
-(ns cassandra-event-store.core-test
+(ns org.amitayh.event-store
   (:import (com.datastax.driver.core.exceptions NoHostAvailableException)
            (java.util UUID))
   (:require [clojure.test :refer :all]
-            [cassandra-event-store.schema :as schema]
-            [cassandra-event-store.write :as w]
-            [cassandra-event-store.read :as r]
+            [org.amitayh.event-store.schema :as schema]
+            [org.amitayh.event-store.write :as w]
+            [org.amitayh.event-store.read :as r]
             [docker.fixture :as docker]
             [qbits.alia :as alia]
             [qbits.hayt :as hayt]))

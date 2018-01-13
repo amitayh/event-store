@@ -1,5 +1,5 @@
-(ns cassandra-event-store.write
-  (:require [cassandra-event-store.common :refer :all]
+(ns org.amitayh.event-store.write
+  (:require [org.amitayh.event-store.common :refer :all]
             [qbits.alia :as alia]
             [taoensso.nippy :as nippy]
             [qbits.hayt :as hayt]))

@@ -1,4 +1,4 @@
-(ns cassandra-event-store.schema
+(ns org.amitayh.event-store.schema
   (:require [qbits.hayt :as hayt]))
 
 (def schema
