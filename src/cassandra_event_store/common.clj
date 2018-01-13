@@ -1,5 +1,6 @@
-(ns cassandra-event-store.common)
+(ns cassandra-event-store.common
+  (:import (java.time Instant)))
 
 (defrecord Event [stream-id version payload timestamp])
 
-(defn now [] (java.time.Instant/now))
+(defn now [] (Instant/now))

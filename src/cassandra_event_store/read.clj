@@ -1,4 +1,5 @@
 (ns cassandra-event-store.read
+  (:import (java.time Instant))
   (:require [cassandra-event-store.common :refer :all]
             [qbits.alia :as alia]
             [taoensso.nippy :as nippy]
@@ -17,7 +18,7 @@
     stream-id
     (:version row)
     (-> row :payload .array nippy/thaw)
-    (-> row :timestamp java.time.Instant/ofEpochMilli)))
+    (-> row :timestamp Instant/ofEpochMilli)))
 
 (defn read-events [session stream-id from-version max-count]
   "Read events from stream `stream-id`.

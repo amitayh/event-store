@@ -1,6 +1,6 @@
 (defproject cassandra-event-store "0.1.0-SNAPSHOT"
-  :description "FIXME: write description"
-  :url "http://example.com/FIXME"
+  :description "Simple event store backed by Cassandra database"
+  :url "https://github.com/amitayh/event-store"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.8.0"]
