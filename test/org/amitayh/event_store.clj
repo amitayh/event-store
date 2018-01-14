@@ -122,7 +122,7 @@
   (testing "persist events atomically"
     (let [stream-id (random-stream-id)]
       (persist-events stream-id [:foo] nil)
-      (persist-events stream-id [:bar :baz] nil)
+      (persist-events stream-id [:bar :baz] nil) ; Should fail
       (is (same-events (read-events stream-id 1 10)
                        [{:version 1 :payload :foo}]))))
 
