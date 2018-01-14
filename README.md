@@ -7,6 +7,7 @@ Simple event store backed by Cassandra database. Can be used as the backbone of 
 ### Installation
 
 Add the necessary dependency to your project:
+
 [![Clojars Project](https://img.shields.io/clojars/v/org.amitayh/event-store.svg)](https://clojars.org/org.amitayh/event-store)
 
 ### API
