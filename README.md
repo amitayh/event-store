@@ -19,6 +19,11 @@ which is a nice Clojure wrapper for the Cassandra client.
 
 #### Persist
 
+Return value from the `persist-events` function follows the convention of returning a tuple:
+
+`[value error]` - where `error` is `nil` in case the operation was successful, and `value` is `nil`
+in case the operation failed (for more info, see [either-clj](https://github.com/amitayh/either-clj))
+
 ```clojure
 (require '[org.amitayh.event-store.write :as write]
          '[qbits.alia :as alia])
@@ -37,22 +42,22 @@ which is a nice Clojure wrapper for the Cassandra client.
              
 (persist-events stream-id events)
 ; Returns persisted events:
-;   ({:stream-id <some-uuid>
-;     :version 1
-;     :payload {:type :account-created}
-;     :timestamp <some-timestamp>}
-;    {:stream-id <some-uuid>
-;     :version 2
-;     :payload {:type :owner-changed :owner "John Doe"}
-;     :timestamp <some-timestamp>}
-;    {:stream-id <some-uuid>
-;     :version 3
-;     :payload {:type :deposit-performed :amount 50}
-;     :timestamp <some-timestamp>})
+;   [({:stream-id <some-uuid>
+;      :version 1
+;      :payload {:type :account-created}
+;      :timestamp <some-timestamp>}
+;     {:stream-id <some-uuid>
+;      :version 2
+;      :payload {:type :owner-changed :owner "John Doe"}
+;      :timestamp <some-timestamp>}
+;     {:stream-id <some-uuid>
+;      :version 3
+;      :payload {:type :deposit-performed :amount 50}
+;      :timestamp <some-timestamp>}) nil]
 
 ; Optimistic locking is supported by supplying an optional `expected-version` arg:
 (def event {:type :withdrawal-performed :amount 10})
-(persist-events stream-id [event] 2) ; Returns `:concurrent-modification`, event not saved
+(persist-events stream-id [event] 2) ; Returns `[nil :concurrent-modification]`, event not saved
 (persist-events stream-id [event] 3) ; Succeeds, returns new event
 ```
 
