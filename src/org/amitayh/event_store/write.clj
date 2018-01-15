@@ -1,5 +1,6 @@
 (ns org.amitayh.event-store.write
   (:require [org.amitayh.event-store.common :refer :all]
+            [org.amitayh.either :refer [success failure]]
             [qbits.alia :as alia]
             [taoensso.nippy :as nippy]
             [qbits.hayt :as hayt]))
@@ -48,6 +49,8 @@
 
 (def ^:private applied (keyword "[applied]"))
 
+(def ^:private failed (failure :concurrent-modification))
+
 (defn- was-applied? [result]
   (-> result first applied))
 
@@ -61,14 +64,14 @@
    (loop [retries 5
           expected-version (stream-max-version session stream-id)]
      (let [result (persist-events session stream-id payloads expected-version)]
-       (if (and (= result :concurrent-modification) (pos? retries))
+       (if (and (= result failed) (pos? retries))
          (recur (dec retries) (stream-max-version session stream-id))
          result))))
 
   ([session stream-id payloads expected-version]
    (if (empty? payloads)
-     []
+     (success [])
      (let [events (to-events stream-id payloads (or expected-version 0))
            batch (create-batch session stream-id events expected-version)
            result (alia/execute session batch)]
-       (if (was-applied? result) events :concurrent-modification)))))
+       (if (was-applied? result) (success events) failed)))))

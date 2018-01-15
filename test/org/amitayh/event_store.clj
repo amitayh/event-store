@@ -2,6 +2,7 @@
   (:import (com.datastax.driver.core.exceptions NoHostAvailableException)
            (java.util UUID))
   (:require [clojure.test :refer :all]
+            [org.amitayh.either :refer :all]
             [org.amitayh.event-store.schema :as schema]
             [org.amitayh.event-store.write :as w]
             [org.amitayh.event-store.read :as r]
@@ -71,7 +72,7 @@
     (is (empty? (read-events (random-stream-id) 1 10))))
 
   (testing "persist zero events"
-    (is (= [] (persist-events (random-stream-id) []))))
+    (is (= (success []) (persist-events (random-stream-id) []))))
 
   (testing "persist event for correct stream ID"
     (let [stream-id (random-stream-id)
@@ -80,8 +81,9 @@
       (is (empty? (read-events other-stream-id 1 10)))))
 
   (testing "persist multiple events"
-    (let [stream-id (random-stream-id)]
-      (is (same-events (persist-events stream-id [:foo :bar :baz])
+    (let [stream-id (random-stream-id)
+          result (persist-events stream-id [:foo :bar :baz])]
+      (is (same-events (first result)
                        [{:version 1 :payload :foo}
                         {:version 2 :payload :bar}
                         {:version 3 :payload :baz}]))))
@@ -95,29 +97,31 @@
                         {:version 2 :payload :bar}]))))
 
   (testing "persist events with expected version"
-    (let [stream-id (random-stream-id)]
-      (is (same-events (persist-events stream-id [:foo] nil)
+    (let [stream-id (random-stream-id)
+          result1 (persist-events stream-id [:foo] nil)
+          result2 (persist-events stream-id [:bar] 1)]
+      (is (same-events (first result1)
                        [{:version 1 :payload :foo}]))
-      (is (same-events (persist-events stream-id [:bar] 1)
+      (is (same-events (first result2)
                        [{:version 2 :payload :bar}]))))
 
   (testing "fail if expected version doesn't match"
     (let [stream-id (random-stream-id)]
       (persist-events stream-id [:foo] nil)
       (is (= (persist-events stream-id [:bar] nil)
-             :concurrent-modification))))
+             (failure :concurrent-modification)))))
 
   (testing "not allow version gaps"
     (testing "for first event"
       (let [stream-id (random-stream-id)]
         (is (= (persist-events stream-id [:foo] 1)
-               :concurrent-modification))))
+               (failure :concurrent-modification)))))
 
     (testing "for subsequent events"
       (let [stream-id (random-stream-id)]
         (persist-events stream-id [:foo] nil)
         (is (= (persist-events stream-id [:bar] 2)
-               :concurrent-modification)))))
+               (failure :concurrent-modification))))))
 
   (testing "persist events atomically"
     (let [stream-id (random-stream-id)]
