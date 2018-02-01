@@ -61,11 +61,11 @@
   Otherwise, the persisted events will be returned."
 
   ([session stream-id payloads]
-   (loop [retries 5
-          expected-version (stream-max-version session stream-id)]
-     (let [result (persist-events session stream-id payloads expected-version)]
+   (loop [retries 5]
+     (let [expected-version (stream-max-version session stream-id)
+           result (persist-events session stream-id payloads expected-version)]
        (if (and (= result failed) (pos? retries))
-         (recur (dec retries) (stream-max-version session stream-id))
+         (recur (dec retries))
          result))))
 
   ([session stream-id payloads expected-version]
