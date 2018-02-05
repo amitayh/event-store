@@ -1,6 +1,6 @@
 # event-store [![Build Status](https://travis-ci.org/amitayh/event-store.svg?branch=master)](https://travis-ci.org/amitayh/event-store) [![codecov](https://codecov.io/gh/amitayh/event-store/branch/master/graph/badge.svg)](https://codecov.io/gh/amitayh/event-store)
 
-Simple event store backed by Cassandra database. Can be used as the backbone of an event-sourced system
+Simple event store backed by Cassandra database. Can be used as the backbone of an event-sourced system, either standalone or alongside the [Revent library](https://github.com/amitayh/revent-clj) (supports the same API)
 
 ## Getting started
 
